@@ -1,4 +1,8 @@
 import React, { Component } from "react";
+import { Link, goBack } from "route-lite";
+import "./Styles.css";
+
+import NewCommentScreen from "./NewCommentScreen";
 
 class HomeScreen extends Component {
   constructor(props) {
@@ -8,11 +12,11 @@ class HomeScreen extends Component {
 
   render() {
     return (
-      <div className="container">
-        <button id="startReviewButton" onClick={handleClick}>
-          Start New Review
+      <div className="Container">
+        <button id="startReviewButton" onClick={this.handleClick}>
+          <Link component={NewCommentScreen}>New Comment</Link>
         </button>
-        <button id="editOldReviewButton" onClick={handleClick}>
+        <button id="editOldReviewButton" onClick={this.handleClick}>
           Edit Old Review
         </button>
       </div>
