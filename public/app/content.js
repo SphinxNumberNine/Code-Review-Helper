@@ -57,6 +57,105 @@ function highlightAndClickHandlers() {
   }
 }
 
+function rectangularSelectHandlers() {
+  var canvas = document.createElement("div");
+  canvas.style.width = "100&";
+  canvas.style.height = "100%";
+  canvas.style.zIndex = 50;
+  canvas.id = "myCanvas";
+  canvas.style.position = "fixed";
+  canvas.style.left = 0;
+  canvas.style.top = 0;
+  canvas.style.bottom = 0;
+  canvas.style.right = 0;
+
+  function setMousePosition(e) {
+    var ev = e || window.event; //Moz || IE
+    if (ev.pageX) {
+      //Moz
+      mouse.x = ev.pageX + window.pageXOffset;
+      mouse.y = ev.pageY + window.pageYOffset;
+    } else if (ev.clientX) {
+      //IE
+      mouse.x = ev.clientX + document.body.scrollLeft;
+      mouse.y = ev.clientY + document.body.scrollTop;
+    }
+  }
+
+  var mouse = {
+    x: 0,
+    y: 0,
+    startX: 0,
+    startY: 0
+  };
+
+  var element = null;
+
+  canvas.onmousemove = function(e) {
+    console.log("HERE");
+    setMousePosition(e);
+    if (element != null) {
+      element.style.width = Math.abs(mouse.x - mouse.startX) + "px";
+      element.style.height = Math.abs(mouse.y - mouse.startY) + "px";
+      element.style.left =
+        mouse.x - mouse.startX < 0 ? mouse.x + "px" : mouse.startX + "px";
+      element.style.top =
+        mouse.y - mouse.startY < 0 ? mouse.y + "px" : mouse.startY + "px";
+    }
+  };
+
+  canvas.onclick = function(e) {
+    if (element != null) {
+      // second click
+      var topLeft = {
+        x: parseInt(element.style.left, 10),
+        y: parseInt(element.style.top, 10)
+      };
+      var topRight = {
+        x: parseInt(element.style.left, 10) + parseInt(element.style.width, 10),
+        y: parseInt(element.style.top, 10)
+      };
+      var bottomLeft = {
+        x: parseInt(element.style.left, 10),
+        y: parseInt(element.style.top, 10) + parseInt(element.style.height, 10)
+      };
+      var bottomRight = {
+        x: parseInt(element.style.left, 10) + parseInt(element.style.width, 10),
+        y: parseInt(element.style.top, 10) + parseInt(element.style.height, 10)
+      };
+
+      var coordinates = { topLeft, topRight, bottomLeft, bottomRight };
+
+      console.log(topLeft);
+      console.log(topRight);
+      console.log(bottomLeft);
+      console.log(bottomRight);
+
+      element = null;
+      canvas.style.cursor = "default";
+    } else {
+      // first click
+      mouse.startX = mouse.x;
+      mouse.startY = mouse.y;
+      element = document.createElement("div");
+      element.style.position = "absolute";
+      element.style.border = "1px solid #FF0000";
+      element.style.left = mouse.x + "px";
+      element.style.right = mouse.y + "px";
+      element.style.zIndex = 51;
+      canvas.appendChild(element);
+      canvas.style.cursor = "crosshair";
+    }
+  };
+
+  document.body.appendChild(canvas);
+}
+
+function clearRectangleSelection() {
+  var canvas = document.getElementById("myCanvas");
+  canvas.parentNode.removeChild(canvas);
+}
+
 function clearHandlers() {
   document.body.onmousedown = null;
   document.body.onmouseover = null;

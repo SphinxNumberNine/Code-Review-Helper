@@ -28,7 +28,7 @@ class NewCommentScreen extends Component {
         this.htmlElementSelection();
         break;
       case "selectRegion":
-        break;
+        this.rectangleSelection();
     }
   }
 
@@ -53,6 +53,36 @@ class NewCommentScreen extends Component {
           chrome.tabs.executeScript(tabs[0].id, {
             // code: "(" + clearHandlers + ")();"
             code: "clearHandlers();"
+          });
+        });
+        chrome.storage.sync.set({ enabled: false }, function() {
+          chrome.runtime.sendMessage({ subject: "state changed" });
+        });
+      }
+    });
+  }
+
+  rectangleSelection() {
+    var enabled;
+    chrome.storage.sync.get("enabled", data => {
+      console.log(data);
+      enabled = data.enabled;
+
+      if (!enabled) {
+        chrome.tabs.query({ active: true, currentWindow: true }, tabs => {
+          chrome.tabs.executeScript(tabs[0].id, {
+            // code: "(" + highlightAndClickHandlers + ")();"
+            code: "rectangularSelectHandlers();"
+          });
+        });
+        chrome.storage.sync.set({ enabled: true }, function() {
+          chrome.runtime.sendMessage({ subject: "state changed" });
+        });
+      } else {
+        chrome.tabs.query({ active: true, currentWindow: true }, tabs => {
+          chrome.tabs.executeScript(tabs[0].id, {
+            // code: "(" + clearHandlers + ")();"
+            code: "clearRectangleSelection();"
           });
         });
         chrome.storage.sync.set({ enabled: false }, function() {
