@@ -34,9 +34,9 @@ class NewCommentScreen extends Component {
 
   htmlElementSelection() {
     var enabled;
-    chrome.storage.sync.get("enabled", data => {
+    chrome.storage.sync.get("elementSelectionEnabled", data => {
       console.log(data);
-      enabled = data.enabled;
+      enabled = data.elementSelectionEnabled;
 
       if (!enabled) {
         chrome.tabs.query({ active: true, currentWindow: true }, tabs => {
@@ -45,7 +45,7 @@ class NewCommentScreen extends Component {
             code: "highlightAndClickHandlers();"
           });
         });
-        chrome.storage.sync.set({ enabled: true }, function() {
+        chrome.storage.sync.set({ elementSelectionEnabled: true }, function() {
           chrome.runtime.sendMessage({ subject: "state changed" });
         });
       } else {
@@ -55,7 +55,7 @@ class NewCommentScreen extends Component {
             code: "clearHandlers();"
           });
         });
-        chrome.storage.sync.set({ enabled: false }, function() {
+        chrome.storage.sync.set({ elementSelectionEnabled: false }, function() {
           chrome.runtime.sendMessage({ subject: "state changed" });
         });
       }
@@ -64,9 +64,9 @@ class NewCommentScreen extends Component {
 
   rectangleSelection() {
     var enabled;
-    chrome.storage.sync.get("enabled", data => {
+    chrome.storage.sync.get("rectangularSelectionEnabled", data => {
       console.log(data);
-      enabled = data.enabled;
+      enabled = data.rectangularSelectionEnabled;
 
       if (!enabled) {
         chrome.tabs.query({ active: true, currentWindow: true }, tabs => {
@@ -75,9 +75,12 @@ class NewCommentScreen extends Component {
             code: "rectangularSelectHandlers();"
           });
         });
-        chrome.storage.sync.set({ enabled: true }, function() {
-          chrome.runtime.sendMessage({ subject: "state changed" });
-        });
+        chrome.storage.sync.set(
+          { rectangularSelectionEnabled: true },
+          function() {
+            // chrome.runtime.sendMessage({ subject: "state changed" });
+          }
+        );
       } else {
         chrome.tabs.query({ active: true, currentWindow: true }, tabs => {
           chrome.tabs.executeScript(tabs[0].id, {
@@ -85,9 +88,12 @@ class NewCommentScreen extends Component {
             code: "clearRectangleSelection();"
           });
         });
-        chrome.storage.sync.set({ enabled: false }, function() {
-          chrome.runtime.sendMessage({ subject: "state changed" });
-        });
+        chrome.storage.sync.set(
+          { rectangularSelectionEnabled: false },
+          function() {
+            // chrome.runtime.sendMessage({ subject: "state changed" });
+          }
+        );
       }
     });
   }

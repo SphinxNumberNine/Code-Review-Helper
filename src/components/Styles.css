@@ -9,3 +9,9 @@
   height: 10%;
   background-color: aquamarine;
 }
+
+.ImageContainer {
+  text-align: center;
+  width: 600px;
+  height: 340px;
+}

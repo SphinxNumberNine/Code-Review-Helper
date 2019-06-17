@@ -5,6 +5,8 @@ chrome.runtime.onInstalled.addListener(function() {
     //console.log("The color is green.");
   });
 
+  chrome.storage.sync.set({ elementSelectionEnabled: false });
+  chrome.storage.sync.set({ rectangularSelectionEnabled: false });
   chrome.storage.sync.set({ enabled: false });
 
   chrome.declarativeContent.onPageChanged.removeRules(undefined, function() {
@@ -27,7 +29,7 @@ chrome.runtime.onMessage.addListener(function(message, sender, sendResponse) {
       chrome.debugger.sendCommand({ tabId: sender.tab.id }, "Overlay.disable");
       console.log(message.data.data);
       alert(message.data.comment);
-      chrome.storage.sync.set({ enabled: false });
+      chrome.storage.sync.set({ elementSelectionEnabled: false });
       break;
     case "attached": // sent when the content script is injected into webpages
       break;
@@ -60,8 +62,8 @@ chrome.runtime.onMessage.addListener(function(message, sender, sendResponse) {
       );
       break;
     case "state changed":
-      chrome.storage.sync.get("enabled", function(data) {
-        if (data.enabled) {
+      chrome.storage.sync.get("elementSelectionEnabled", function(data) {
+        if (data.elementSelectionEnabled) {
           chrome.tabs.query({ active: true, currentWindow: true }, function(
             tabs
           ) {
@@ -75,6 +77,37 @@ chrome.runtime.onMessage.addListener(function(message, sender, sendResponse) {
           });
         }
       });
+      break;
+    case "rectangle created":
+      console.log(message.data);
+      // alert(message.data);
+      chrome.tabs.captureVisibleTab(function(url) {
+        //chrome.tabs.create({ url });
+        chrome.tabs.query({ active: true, currentWindow: true }, function(
+          tabs
+        ) {
+          chrome.tabs.sendMessage(
+            tabs[0].id,
+            {
+              subject: "page screenshotted",
+              url: url,
+              newWidth: parseInt(message.data.data.newWidth, 10),
+              newHeight: parseInt(message.data.data.newHeight, 10),
+              startX: parseInt(message.data.data.startX, 10),
+              startY: parseInt(message.data.data.startY, 10),
+              comment: message.data.data.comment,
+              scroll: message.data.data.scroll
+            },
+            function(response) {}
+          );
+        });
+      });
+      break;
+    case "rectangle cropped":
+      chrome.storage.sync.set({ rectangularSelectionEnabled: false });
+      // console.log(message.data.newUrl);
+      // chrome.tabs.create({ url: message.data.newUrl });
+      // alert(message.data.comment);
       break;
   }
 });

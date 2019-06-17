@@ -3,6 +3,7 @@ import { Link, goBack } from "route-lite";
 import "./Styles.css";
 
 import NewCommentScreen from "./NewCommentScreen";
+import NewReviewScreen from "./NewReviewScreen";
 
 class HomeScreen extends Component {
   constructor(props) {
@@ -14,7 +15,7 @@ class HomeScreen extends Component {
     return (
       <div className="Container">
         <button id="startReviewButton" onClick={this.handleClick}>
-          <Link component={NewCommentScreen}>New Comment</Link>
+          <Link component={NewReviewScreen}>Start New Review</Link>
         </button>
         <button id="editOldReviewButton" onClick={this.handleClick}>
           Edit Old Review
